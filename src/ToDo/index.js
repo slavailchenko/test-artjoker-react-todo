@@ -6,8 +6,11 @@ import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import SvgIcon from '@material-ui/core/SvgIcon';
+import Modal from '@material-ui/core/Modal';
 
-const styles = theme => ({
+
+const styles = ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -15,13 +18,26 @@ const styles = theme => ({
   textField: {
     marginLeft: 10,
     marginRight: 10,
-    width: 200,
+    width: 120,
   },
-  menu: {
-    width: 200,
-  },
+  btnDelete: {
+        padding: 15,
+        zoom: '0.7',
+        borderRadius: '50%',
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+        color: 'red',
+        fontSize: 'x-large'
+    },
+   btnAdd: {
+        marginTop: 10,
+        marginBottom: 10,
+        color: '#3f51b5',
+        fontSize: 'medium'
+   },
+   btnSave: {
+        marginRight: 20,
+   }
 });
-
 
 const selectbox = [
   {
@@ -108,7 +124,7 @@ var store = createStore(reducers)
 store.subscribe(() => {
     let state = store.getState();
     localStorage.todo = JSON.stringify(state.todo.items);
-})
+});
 
 class ToDoItem extends Component {
     constructor(props){
@@ -121,7 +137,7 @@ class ToDoItem extends Component {
     }
 
         console.log (this.state.num, this.state.select);
-
+        this.edit = this.edit.bind (this);
         this.delete = this.delete.bind(this);
     }
 
@@ -129,13 +145,18 @@ class ToDoItem extends Component {
       this.setState({
         [name]: event.target.value,
           });
-        console.log (this.state.timestamp);
+       console.log (this.state.timestamp);
+       setTimeout (this.edit(), 2000);
+    };
 
+    edit () {
+             
         store.dispatch ({type: 'EDIT_TODO',
                         select:  this.state.select,
                         num:   this.state.num,
-                        timestamp: this.state.timestamp})
-        }
+                        timestamp: this.state.timestamp});
+                    
+    }
 
     delete() {
         store.dispatch({type: "DELETE_TODO", timestamp: this.props.item.timestamp})
@@ -143,10 +164,13 @@ class ToDoItem extends Component {
 
     render() {
         const { classes } = this.props;
+
         
         return (
                 
-      <form className={classes.container} noValidate autoComplete="off">
+      <form className={classes.container} 
+            style = {{marginLeft: '10px'}}
+            noValidate autoComplete="off">
         
                  <TextField
                       id="select-box"
@@ -160,6 +184,7 @@ class ToDoItem extends Component {
                         },
                       }}
                       margin="normal"
+                      style = {styles.textField}
                     >
                       {selectbox.map(option => (
                         <MenuItem key={option.value} value={option.value}>
@@ -178,16 +203,20 @@ class ToDoItem extends Component {
                     shrink: true,
                   }}
                   margin="normal"
+                  style = {styles.textField}
                 />
+                <Button
+                    style={styles.btnDelete}
+                    onClick={this.delete}> X
+                </Button>
                 
-                <Button onClick={this.delete} >x</Button>
             </form>
         );
     }
 };
 
 ToDoItem.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 class ToDoForm extends Component {
@@ -198,6 +227,7 @@ class ToDoForm extends Component {
             num: '22',
             selectbox: selectbox[0].label,
             clickButton: false,
+            openModal: true
              };
 
         this.save = this.save.bind(this);
@@ -210,10 +240,14 @@ class ToDoForm extends Component {
       this.setState({
         [name]: event.target.value,
           });
-     };   
+     }; 
+
+    handleClose = () => {
+        this.setState({ openModal: false });
+    }; 
 
     save () {
-        
+
         if (this.state.clickButton){
             store.dispatch({type: 'NEW_TODO',
                             select:  this.state.selectbox,
@@ -223,39 +257,33 @@ class ToDoForm extends Component {
             // num: '22'});
          this.setState({
             clickButton: false,
+            openModal: false
           });
-     }
+        }
     }
 
     add () {
         this.setState({
         clickButton: true,
-          });
+        });
     }
 
     cancel () {
         this.setState({
         clickButton: false,
-          });
+        openModal: false
+       });
+    
     }
-
 
     render () {
 
-        let style = {
-            backgroundColor: this.state.valid ? '' : 'red'
-        };
-
         const { classes } = this.props;
 
-        const select = this.state.selectbox;
-        const num = this.state.num; 
-        console.log(select);
-        console.log(num);
-        
         return (
   
-           <form className={classes.container} noValidate autoComplete="off">
+           <form className={classes.container} style = {{marginLeft: '10px'}}
+           noValidate autoComplete="off">
                 { this.state.clickButton == true && <div>
                 <TextField
                       select
@@ -268,6 +296,7 @@ class ToDoForm extends Component {
                         },
                       }}
                       margin="normal"
+                      style = {styles.textField}
                     >
                       {selectbox.map(option => (
                         <MenuItem key={option.value} value={option.value}>
@@ -285,16 +314,26 @@ class ToDoForm extends Component {
                     shrink: true,
                   }}
                   margin="normal"
+                  style = {styles.textField}
                 />
             </div> }
 
                 <div>
-                    <Button onClick = { this.add } >Add ToDo </Button>
+                    <Button style = {styles.btnAdd} 
+                     onClick = { this.add } >ДОБАВИТЬ</Button>
                 </div>
 
                 <div>
-                    <Button onClick = { this.save } >Save</Button>
-                    <Button onClick = { this.cancel }>Cancel</Button>
+                    <Button variant="contained" color="primary" style={styles.btnSave}
+                     onClick = { this.save }>СОХРАНИТЬ</Button>
+                    
+                    <Button variant="contained" 
+                    onClick = { this.cancel }>ОТМЕНА</Button>
+              
+
+                    {this.state.openModal === false && <div><Modal open={this.state.openModal}
+                    onClose={this.handleClose}/></div>}
+
                 </div>
 
             </form>
@@ -320,7 +359,7 @@ class ToDoList extends Component {
                 {container: 'addTodo'}, {textField: 'textField'}, {menu: 'menu'}}
                 /> 
 
-            </div>
+           </div>
         );
     }
 }
@@ -345,4 +384,4 @@ class ToDo extends Component {
   }
 }
 
-export default withStyles(styles)(ToDo);
+export default ToDo;

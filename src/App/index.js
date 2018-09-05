@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import logo from './logo.svg';
 import './App.css';
 
@@ -34,6 +35,13 @@ const styles = theme => ({
   },
 });
 
+const HomeIcon = (props) => (
+    <SvgIcon {...props}>
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+    </SvgIcon>
+);
+
 class SimpleModal extends Component {
   state = {
     open: false,
@@ -49,24 +57,36 @@ class SimpleModal extends Component {
 
   render() {
     const { classes } = this.props;
+    const BtnCloseModal = (props) => (
+            <HomeIcon
+                style={{
+                      padding: 20,
+                      cursor: 'pointer'
+                  }}
+                color={grey900}
+                onClick={this.handleClose}
+            />
+        );
 
     return (
      <div>
-        <Typography gutterBottom>Click to get the full Modal experience!</Typography>
-        <Button onClick={this.handleOpen}>Open Modal</Button>
+        <Typography gutterBottom>Нажмите для отображения модального окна</Typography>
+        <Button onClick={this.handleOpen}>Открыть</Button>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
           onClose={this.handleClose}
         >
+
           <div style={getModalStyle()} className={classes.paper}>
-            <Typography variant="title" id="modal-title">
-              Text in a modal
-            </Typography>
+            <div className="Modal-header" style={{width: '90%', 
+                                                  backgroundColor: '#80808042'}}>
+                <h2 style={{float:'left', paddingLeft: '20px'}}>Структура номеров</h2> <BtnCloseModal />
+            </div>
 
             <ToDo />
-            
+
           </div>
         </Modal>
       </div>
