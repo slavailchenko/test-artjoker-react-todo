@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import {grey900} from '@material-ui/core/color';
+import {grey900} from '@material-ui/core/colors';
 import logo from './logo.svg';
 import './App.css';
 
