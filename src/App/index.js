@@ -11,6 +11,7 @@ import './App.css';
 
 import ToDo from '../ToDo';
 
+
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
@@ -43,7 +44,7 @@ const HomeIcon = (props) => (
     </SvgIcon>
 );
 
-class SimpleModal extends Component {
+export class SimpleModal extends Component {
   state = {
     open: false,
   };
@@ -83,10 +84,11 @@ class SimpleModal extends Component {
           <div style={getModalStyle()} className={classes.paper}>
             <div className="Modal-header" style={{width: '90%', 
                                                   backgroundColor: '#80808042'}}>
-                <h2 style={{float:'left', paddingLeft: '20px'}}>Структура номеров</h2> <BtnCloseModal />
+                <h2 style={{float:'left', paddingLeft: '20px'}}>Структура номеров</h2> 
+            <BtnCloseModal />
             </div>
 
-            <ToDo />
+            <ToDo/>
 
           </div>
         </Modal>

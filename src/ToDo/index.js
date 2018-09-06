@@ -6,7 +6,6 @@ import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import Modal from '@material-ui/core/Modal';
 
 
@@ -81,7 +80,6 @@ console.log (localStorage.todo);
 function todoReducer(state, action){
 
     console.log (state);
-    console.log (JSON.parse(localStorage.todo));
  
     if (typeof state == 'undefined'){
         return {items: JSON.parse(localStorage.todo)};
@@ -121,6 +119,7 @@ const reducers = combineReducers({
 })
 
 var store = createStore(reducers)
+
 store.subscribe(() => {
     let state = store.getState();
     localStorage.todo = JSON.stringify(state.todo.items);
@@ -228,7 +227,7 @@ class ToDoForm extends Component {
             selectbox: selectbox[0].label,
             clickButton: false,
             openModal: true
-             };
+            };
 
         this.save = this.save.bind(this);
         this.cancel = this.cancel.bind(this);
@@ -242,24 +241,18 @@ class ToDoForm extends Component {
           });
      }; 
 
-    handleClose = () => {
-        this.setState({ openModal: false });
-    }; 
-
     save () {
+
+         this.setState({
+            clickButton: false,
+            openModal: false
+          });
 
         if (this.state.clickButton){
             store.dispatch({type: 'NEW_TODO',
                             select:  this.state.selectbox,
                             num:   this.state.num});
-            // this.setState ({
-            // selectbox: 'Twin',
-            // num: '22'});
-         this.setState({
-            clickButton: false,
-            openModal: false
-          });
-        }
+          }
     }
 
     add () {
@@ -273,10 +266,9 @@ class ToDoForm extends Component {
         clickButton: false,
         openModal: false
        });
-    
-    }
+     }
 
-    render () {
+      render () {
 
         const { classes } = this.props;
 
@@ -324,22 +316,23 @@ class ToDoForm extends Component {
                 </div>
 
                 <div>
+
                     <Button variant="contained" color="primary" style={styles.btnSave}
                      onClick = { this.save }>СОХРАНИТЬ</Button>
                     
                     <Button variant="contained" 
                     onClick = { this.cancel }>ОТМЕНА</Button>
+
+                    {console.log(this.handleClose, this.state.openModal)}
               
-
-                    {this.state.openModal === false && <div><Modal open={this.state.openModal}
-                    onClose={this.handleClose}/></div>}
-
-                </div>
+                 </div>
 
             </form>
         );
-    }
-};
+      }
+  };
+
+
 
 ToDoForm.propTypes = {
   classes: PropTypes.object.isRequired,
