@@ -32,9 +32,6 @@ const styles = ({
         marginBottom: 10,
         color: '#3f51b5',
         fontSize: 'medium'
-   },
-   btnSave: {
-        marginRight: 20,
    }
 });
 
@@ -135,7 +132,6 @@ class ToDoItem extends Component {
             timestamp: this.props.item.timestamp
     }
 
-        console.log (this.state.num, this.state.select);
         this.edit = this.edit.bind (this);
         this.delete = this.delete.bind(this);
     }
@@ -163,53 +159,52 @@ class ToDoItem extends Component {
 
     render() {
         const { classes } = this.props;
-
-        
+   
         return (
                 
-      <form className={classes.container} 
-            style = {{marginLeft: '10px'}}
-            noValidate autoComplete="off">
-        
-                 <TextField
-                      id="select-box"
-                      select
+          <form className={classes.container} 
+                style = {{marginLeft: '10px'}}
+                noValidate autoComplete="off">
+            
+                     <TextField
+                          id="select-box"
+                          select
+                          className={classes.textField}
+                          value={this.state.select}
+                          onChange={this.handleChange('select')}
+                          SelectProps={{
+                            MenuProps: {
+                              className: classes.menu,
+                            },
+                          }}
+                          margin="normal"
+                          style = {styles.textField}
+                        >
+                          {selectbox.map(option => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                     ))}
+                    </TextField>
+
+                    <TextField
+                      id="number"
+                      value={this.state.num}
+                      onChange={this.handleChange('num')}
+                      type="number"
                       className={classes.textField}
-                      value={this.state.select}
-                      onChange={this.handleChange('select')}
-                      SelectProps={{
-                        MenuProps: {
-                          className: classes.menu,
-                        },
+                      InputLabelProps={{
+                        shrink: true,
                       }}
                       margin="normal"
                       style = {styles.textField}
-                    >
-                      {selectbox.map(option => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                 ))}
-                </TextField>
-
-                <TextField
-                  id="number"
-                  value={this.state.num}
-                  onChange={this.handleChange('num')}
-                  type="number"
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  margin="normal"
-                  style = {styles.textField}
-                />
-                <Button
-                    style={styles.btnDelete}
-                    onClick={this.delete}> X
-                </Button>
-                
-            </form>
+                    />
+                    <Button
+                        style={styles.btnDelete}
+                        onClick={this.delete}> X
+                    </Button>
+                    
+                </form>
         );
     }
 };
@@ -218,7 +213,7 @@ ToDoItem.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-class ToDoForm extends Component {
+export class ToDoForm extends Component {
     constructor (props) {
         super(props);
 
@@ -226,26 +221,31 @@ class ToDoForm extends Component {
             num: '22',
             selectbox: selectbox[0].label,
             clickButton: false,
-            openModal: true
             };
 
         this.save = this.save.bind(this);
-        this.cancel = this.cancel.bind(this);
         this.add = this.add.bind(this);
         
     }
 
-    handleChange = name => event => {
+  componentDidMount() {
+    this.props.onRef(this)
+  }
+
+  componentWillUnmount() {
+      this.props.onRef(undefined)
+  }
+
+  handleChange = name => event => {
       this.setState({
         [name]: event.target.value,
           });
      }; 
 
-    save () {
+  save () {
 
          this.setState({
             clickButton: false,
-            openModal: false
           });
 
         if (this.state.clickButton){
@@ -261,14 +261,7 @@ class ToDoForm extends Component {
         });
     }
 
-    cancel () {
-        this.setState({
-        clickButton: false,
-        openModal: false
-       });
-     }
-
-      render () {
+    render () {
 
         const { classes } = this.props;
 
@@ -315,23 +308,10 @@ class ToDoForm extends Component {
                      onClick = { this.add } >ДОБАВИТЬ</Button>
                 </div>
 
-                <div>
-
-                    <Button variant="contained" color="primary" style={styles.btnSave}
-                     onClick = { this.save }>СОХРАНИТЬ</Button>
-                    
-                    <Button variant="contained" 
-                    onClick = { this.cancel }>ОТМЕНА</Button>
-
-                    {console.log(this.handleClose, this.state.openModal)}
-              
-                 </div>
-
             </form>
         );
       }
   };
-
 
 
 ToDoForm.propTypes = {
@@ -347,10 +327,6 @@ class ToDoList extends Component {
                 { this.props.items.map( (item, index) => <ToDoItem classes={
                 {container: 'viewTodo'}, {textField: 'textField'}, {menu: 'menu'}}
                     key={index} item={item} />) }
-
-                <ToDoForm classes={
-                {container: 'addTodo'}, {textField: 'textField'}, {menu: 'menu'}}
-                /> 
 
            </div>
         );

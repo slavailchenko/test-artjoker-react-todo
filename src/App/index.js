@@ -10,6 +10,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import ToDo from '../ToDo';
+import {ToDoForm} from '../ToDo';
 
 
 function rand() {
@@ -44,7 +45,7 @@ const HomeIcon = (props) => (
     </SvgIcon>
 );
 
-export class SimpleModal extends Component {
+class SimpleModal extends Component {
   state = {
     open: false,
   };
@@ -56,6 +57,11 @@ export class SimpleModal extends Component {
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  onClick = () => {
+    this.child.save ();
+    this.setState({ open: false });
+  }
 
   render() {
     const { classes } = this.props;
@@ -89,6 +95,13 @@ export class SimpleModal extends Component {
             </div>
 
             <ToDo/>
+              <div>
+                <ToDoForm onRef={ref => (this.child = ref)} 
+                classes={{container: 'addTodo'}, {textField: 'textField'}, {menu: 'menu'}}/>
+                <Button variant="contained" color="primary" style={{marginRight: 20}}
+                    onClick={this.onClick}>СОХРАНИТЬ</Button>
+                <Button variant="contained" onClick = {this.handleClose}>ОТМЕНА</Button>
+            </div>
 
           </div>
         </Modal>
